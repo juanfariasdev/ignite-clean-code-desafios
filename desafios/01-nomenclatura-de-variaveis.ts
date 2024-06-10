@@ -28,26 +28,26 @@ export default async function classifyGithubUser(req, res) {
     })
   }
 
-  const response = await fetch(`https://api.github.com/users/${username}`);
+  const userResponse = await fetch(`https://api.github.com/users/${username}`);
 
-  if (response.status === 404) {
+  if (userResponse.status === 404) {
     return res.status(400).json({
       message: `User with username "${username}" not found`
     })
   }
 
-  const userData = await response.json()
+  const userData = await userResponse.json()
 
   const sortedCategories = categories.sort((a, b) => b.minFollowers - a.minFollowers); 
 
   const userCategory = sortedCategories.find(category => userData.followers > category.minFollowers)
 
-  const result = {
+  const classifiedUser = {
     username,
     category: userCategory.title
   }
 
-  return result
+  return classifiedUser
 }
 
 classifyGithubUser({ query: {
